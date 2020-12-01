@@ -1,2 +1,4 @@
 *.o
 *.bin
+kernel.bin
+os-image.bin
