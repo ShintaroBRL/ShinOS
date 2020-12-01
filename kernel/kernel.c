@@ -12,8 +12,10 @@ void kernel_main() {
     asm("int $2");
     asm("int $3");
 
-    kprint("Type something, it will go through the kernel\n"
-        "Type END to halt the CPU or PAGE to request a kmalloc()\n> ");
+    clear_screen();
+
+    kprint("Bem-Vindo ao ShinOS!\n"
+        "END -> shutdown  PAGE -> request a kmalloc()\nShinOS> ");
 }
 
 void user_input(char *input) {
@@ -36,5 +38,5 @@ void user_input(char *input) {
     }
     kprint("You said: ");
     kprint(input);
-    kprint("\n> ");
+    kprint("\nShinOS> ");
 }
