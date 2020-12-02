@@ -2,7 +2,6 @@
 //             Written for JamesM's kernel development tutorials.
 
 #include "paging.h"
-#include "mem.h"
 #include "../drivers/screen.h"
 
 // The kernel's page directory

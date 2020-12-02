@@ -76,9 +76,4 @@ int strcmp(char s1[], char s2[]) {
     return s1[i] - s2[i];
 }
 
-// Write len copies of val into dest.
-void memset(u8int *dest, u8int val, u32int len)
-{
-    u8int *temp = (u8int *)dest;
-    for ( ; len != 0; len--) *temp++ = val;
-}
+
