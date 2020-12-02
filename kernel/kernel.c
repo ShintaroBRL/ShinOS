@@ -4,6 +4,7 @@
 #include "../libc/string.h"
 #include "../libc/mem.h"
 #include <stdint.h>
+#include "../libc/paging.h"
 
 void kernel_main() {
     isr_install();
@@ -13,6 +14,10 @@ void kernel_main() {
     asm("int $3");
 
     clear_screen();
+    initialise_paging();
+
+    u32int *ptr = (u32int*)0xA0000000;
+    u32int do_page_fault = *ptr;
 
     kprint("Bem-Vindo ao ShinOS!\n"
         "END -> shutdown  PAGE -> request a kmalloc()\n\nShinOS>: ");

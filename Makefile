@@ -8,7 +8,7 @@ CC = /usr/local/i386elfgcc/bin/i386-elf-gcc
 GDB = /usr/local/i386elfgcc/bin/i386-elf-gdb
 LD = /usr/local/i386elfgcc/bin/i386-elf-ld
 # -g: Use debugging symbols in gcc
-CFLAGS = -g -ffreestanding -Wall -Wextra -fno-exceptions -m32
+CFLAGS = -g -ffreestanding -Wall -Wextra -fno-exceptions -m32 -Wunused-function -Wunused-variable
 
 # First rule is run by default
 os-image.bin: boot/bootsect.bin kernel.bin

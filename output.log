@@ -1,0 +1,31 @@
+kernel/kernel.c: In function 'kernel_main':
+kernel/kernel.c:20:12: warning: unused variable 'do_page_fault' [-Wunused-variable]
+     u32int do_page_fault = *ptr;
+            ^
+libc/paging.c: In function 'initialise_paging':
+libc/paging.c:118:5: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+     memset(frames, 0, INDEX_FROM_BIT(nframes));
+     ^
+libc/paging.c:132:14: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     while (i < placement_address)
+              ^
+libc/paging.c:139:5: warning: passing argument 2 of 'register_interrupt_handler' from incompatible pointer type
+     register_interrupt_handler(14, page_fault);
+     ^
+In file included from libc/paging.h:5:0,
+                 from libc/paging.c:4:
+libc/../cpu/isr.h:93:6: note: expected 'isr_t' but argument is of type 'void (*)(struct registers_t)'
+ void register_interrupt_handler(uint8_t n, isr_t handler);
+      ^
+libc/paging.c: In function 'page_fault':
+libc/paging.c:191:9: warning: unused variable 'id' [-Wunused-variable]
+     int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
+         ^
+libc/paging.c: At top level:
+libc/paging.c:44:15: warning: 'test_frame' defined but not used [-Wunused-function]
+ static u32int test_frame(u32int frame_addr)
+               ^
+libc/paging.c: In function 'first_frame':
+libc/paging.c:71:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
