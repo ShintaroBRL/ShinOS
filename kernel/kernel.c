@@ -15,7 +15,7 @@ void kernel_main() {
     clear_screen();
 
     kprint("Bem-Vindo ao ShinOS!\n"
-        "END -> shutdown  PAGE -> request a kmalloc()\nShinOS> ");
+        "END -> shutdown  PAGE -> request a kmalloc()\n\nShinOS>: ");
 }
 
 void user_input(char *input) {
@@ -34,9 +34,10 @@ void user_input(char *input) {
         kprint(page_str);
         kprint(", physical address: ");
         kprint(phys_str);
-        kprint("\n");
+    } else if (strcmp(input, "CLEAR") == 0) {
+        clear_screen();
+    }else{
+        kprint("Command not found");
     }
-    kprint("You said: ");
-    kprint(input);
-    kprint("\nShinOS> ");
+    kprint("\nShinOS>: ");
 }
