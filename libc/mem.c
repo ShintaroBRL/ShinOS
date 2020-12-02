@@ -15,19 +15,46 @@ void memory_set(uint8_t *dest, uint8_t val, uint32_t len) {
 /* This should be computed at link time, but a hardcoded
  * value is fine for now. Remember that our kernel starts
  * at 0x1000 as defined on the Makefile */
-uint32_t free_mem_addr = 0x10000;
+u32int placement_address = 0x10000; 
 /* Implementation is just a pointer to some free memory which
  * keeps growing */
-uint32_t kmalloc(size_t size, int align, uint32_t *phys_addr) {
-    /* Pages are aligned to 4K, or 0x1000 */
-    if (align == 1 && (free_mem_addr & 0xFFFFF000)) {
-        free_mem_addr &= 0xFFFFF000;
-        free_mem_addr += 0x1000;
+u32int kmalloc_int(u32int sz, int align, u32int *phys)
+{
+    // This will eventually call malloc() on the kernel heap.
+    // For now, though, we just assign memory at placement_address
+    // and increment it by sz. Even when we've coded our kernel
+    // heap, this will be useful for use before the heap is initialised.
+    if (align == 1 && (placement_address & 0xFFFFF000) )
+    {
+        // Align the placement address;
+        placement_address &= 0xFFFFF000;
+        placement_address += 0x1000;
     }
-    /* Save also the physical address */
-    if (phys_addr) *phys_addr = free_mem_addr;
+    if (phys)
+    {
+        *phys = placement_address;
+    }
+    u32int tmp = placement_address;
+    placement_address += sz;
+    return tmp;
+}
 
-    uint32_t ret = free_mem_addr;
-    free_mem_addr += size; /* Remember to increment the pointer */
-    return ret;
+u32int kmalloc_a(u32int sz)
+{
+    return kmalloc_int(sz, 1, 0);
+}
+
+u32int kmalloc_p(u32int sz, u32int *phys)
+{
+    return kmalloc_int(sz, 0, phys);
+}
+
+u32int kmalloc_ap(u32int sz, u32int *phys)
+{
+    return kmalloc_int(sz, 1, phys);
+}
+
+u32int kmalloc(u32int sz)
+{
+    return kmalloc_int(sz, 0, 0);
 }
