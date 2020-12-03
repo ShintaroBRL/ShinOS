@@ -16,9 +16,6 @@ void kernel_main() {
     clear_screen();
     initialise_paging();
 
-    u32int *ptr = (u32int*)0xA0000000;
-    u32int do_page_fault = *ptr;
-
     kprint("Bem-Vindo ao ShinOS!\n"
         "END -> shutdown  PAGE -> request a kmalloc()\n\nShinOS>: ");
 }

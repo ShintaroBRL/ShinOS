@@ -12,6 +12,13 @@ void memory_set(uint8_t *dest, uint8_t val, uint32_t len) {
     for ( ; len != 0; len--) *temp++ = val;
 }
 
+// Write len copies of val into dest.
+void memset(u32int *dest, u32int val, u32int len)
+{
+    u32int *temp = (u32int *)dest;
+    for ( ; len != 0; len--) *temp++ = val;
+}
+
 /* This should be computed at link time, but a hardcoded
  * value is fine for now. Remember that our kernel starts
  * at 0x1000 as defined on the Makefile */
@@ -58,3 +65,5 @@ u32int kmalloc(u32int sz)
 {
     return kmalloc_int(sz, 0, 0);
 }
+
+/*##########################################################*/

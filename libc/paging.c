@@ -3,6 +3,9 @@
 
 #include "paging.h"
 #include "../drivers/screen.h"
+#include "mem.h"
+#include "../cpu/isr.h"
+#include "function.h"
 
 // The kernel's page directory
 page_directory_t *kernel_directory=0;
@@ -14,12 +17,16 @@ page_directory_t *current_directory=0;
 u32int *frames;
 u32int nframes;
 
-// Defined in kheap.c
-extern u32int placement_address;
+
+/* This should be computed at link time, but a hardcoded
+ * value is fine for now. Remember that our kernel starts
+ * at 0x1000 as defined on the Makefile */
+s32int placement_addres = 0x10000; 
 
 // Macros used in the bitset algorithms.
 #define INDEX_FROM_BIT(a) (a/(8*4))
 #define OFFSET_FROM_BIT(a) (a%(8*4))
+
 
 // Static function to set a bit in the frames bitset
 static void set_frame(u32int frame_addr)
@@ -40,13 +47,13 @@ static void clear_frame(u32int frame_addr)
 }
 
 // Static function to test if a bit is set.
-static u32int test_frame(u32int frame_addr)
+/*static u32int test_frame(u32int frame_addr)
 {
     u32int frame = frame_addr/0x1000;
     u32int idx = INDEX_FROM_BIT(frame);
     u32int off = OFFSET_FROM_BIT(frame);
     return (frames[idx] & (0x1 << off));
-}
+}*/
 
 // Static function to find the first free frame.
 static u32int first_frame()
@@ -62,11 +69,13 @@ static u32int first_frame()
                 u32int toTest = 0x1 << j;
                 if ( !(frames[i]&toTest) )
                 {
-                    return i*4*8+j;
+                    return (u32int) i*4*8+j;
                 }
             }
         }
     }
+
+    return 0;
 }
 
 // Function to allocate a frame.
@@ -128,14 +137,15 @@ void initialise_paging()
     // by calling kmalloc(). A while loop causes this to be
     // computed on-the-fly rather than once at the start.
     int i = 0;
-    while (i < placement_address)
+    while (i < placement_addres)
     {
         // Kernel code is readable but not writeable from userspace.
         alloc_frame( get_page(i, 1, kernel_directory), 0, 0);
         i += 0x1000;
     }
+
     // Before we enable paging, we must register our page fault handler.
-    register_interrupt_handler(14, page_fault);
+    register_interrupt_handler(IRQ14, page_fault);
 
     // Now, enable paging!
     switch_page_directory(kernel_directory);
@@ -147,7 +157,7 @@ void switch_page_directory(page_directory_t *dir)
     asm volatile("mov %0, %%cr3":: "r"(&dir->tablesPhysical));
     u32int cr0;
     asm volatile("mov %%cr0, %0": "=r"(cr0));
-    cr0 |= 0x80000000; // Enable paging!
+    cr0 |= placement_addres; // Enable paging!
     asm volatile("mov %0, %%cr0":: "r"(cr0));
 }
 
@@ -175,14 +185,15 @@ page_t *get_page(u32int address, int make, page_directory_t *dir)
 }
 
 
-void page_fault(registers_t regs)
+void page_fault(registers_t *regs)
 {
     // A page fault has occurred.
     // The faulting address is stored in the CR2 register.
     u32int faulting_address;
     asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
-    
-    // The error code gives us details of what happened.
+    UNUSED(faulting_address);
+    UNUSED(regs);
+    /*// The error code gives us details of what happened.
     int present   = !(regs.err_code & 0x1); // Page not present
     int rw = regs.err_code & 0x2;           // Write operation?
     int us = regs.err_code & 0x4;           // Processor was in user-mode?
@@ -197,6 +208,6 @@ void page_fault(registers_t regs)
     if (reserved) {kprint("reserved ");}
     kprint(") at 0x");
     kprint("adress");
-    kprint("\n");
+    kprint("\n");*/
     kprint("Page fault");
 }

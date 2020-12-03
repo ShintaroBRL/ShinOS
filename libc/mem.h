@@ -5,10 +5,14 @@
 #include <stddef.h>
 #include "common.h"
 
+/* This should be computed at link time, but a hardcoded
+ * value is fine for now. Remember that our kernel starts
+ * at 0x1000 as defined on the Makefile */
+
 void memory_copy(uint8_t *source, uint8_t *dest, int nbytes);
 void memory_set(uint8_t *dest, uint8_t val, uint32_t len);
 
-void memset(u8int *dest, u8int val, u32int len);
+void memset(u32int *dest, u32int val, u32int len);
 /**
    Allocate a chunk of memory, sz in size. If align == 1,
    the chunk must be page-aligned. If phys != 0, the physical
